@@ -3,8 +3,8 @@
 var config = {
     user: 'INFINITO',
     password: '@@Piero1207@@',
-    server: 'infinitosoftware.database.windows.net',
-    database: 'BD_SRCOMANDA_SHAWARMA',
+    server: 'infinito.database.windows.net',
+    database: 'BD_SRCOMANDA_ELSULTAN',
     options: {
         encrypt: true,
     }
