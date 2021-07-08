@@ -65,6 +65,66 @@ router.get('/getKey', async (req, res, next) => {
 });
 
 //=========================================================================
+// ActualizarStatusCodeCPE
+//=========================================================================
+
+router.put('/ActualizarStatusCodeCPE', jwtMW, async (req, res, next) => {
+
+    var IdSalida = req.body.IdSalida;
+    var CodigoEstadoCDR = req.body.CodigoEstadoCDR;
+    var opcion = req.body.opcion;
+
+    try {
+        const pool = await poolPromise
+        const queryResult = await pool.request()
+            .input('IdSalida', sql.Int, IdSalida)
+            .input('CodigoEstadoCDR', sql.NVarChar, CodigoEstadoCDR)
+            .input('Opcion', sql.TinyInt, opcion)
+            .output('Rpta')
+            .execute('ActualizarStatusCodeCPE')
+
+        if (queryResult.output != null) {
+            const ID = queryResult.output.Rpta
+            res.end(JSON.stringify({ success: true, message: ID }));
+        }
+        else {
+            res.send(JSON.stringify({ success: false, message: err.message }))
+        }
+
+    }
+    catch (err) {
+        res.status(500) //Internal Server Error
+        res.send(JSON.stringify({ success: false, message: err.message }));
+    }
+
+})
+
+//=========================================================================
+// ConfiguracionEmpresa
+//=========================================================================
+
+router.get('/ConfiguracionEmpresa', jwtMW, async (req, res, next) => {
+
+    try {
+        const pool = await poolPromise
+        const queryResult = await pool.request()
+            .execute('ConfiguracionEmpresa')
+
+        if (queryResult.recordset.length > 0) {
+            res.send(JSON.stringify({ success: true, result: queryResult.recordset }));
+        }
+        else {
+            res.send(JSON.stringify({ success: false, message: "Empty" }));
+        }
+    }
+    catch (err) {
+        res.status(500) //Internal Server Error
+        res.send(JSON.stringify({ success: false, message: err.message }));
+    }
+
+});
+
+//=========================================================================
 // TABLA USUARIO
 // GET
 //=========================================================================
@@ -1124,6 +1184,8 @@ router.post('/Pa_AEE_Mesa_Pedido', jwtMW, async (req, res, next) => {
             .input('idMesa', sql.Int, idMesa)
             .input('idPedido', sql.Int, idPedido)
             .input('FechaPedido', sql.Date, FechaPedido)
+            .input('DesdeApp', sql.Int, 0)
+            .input('PreCuenta', sql.Int, 0)
             .input('Opcion', sql.Int, opcion)
             .output('Rpta')
             .execute('Pa_AEE_Mesa_Pedido')
@@ -1158,6 +1220,8 @@ router.put('/Pa_AEE_Mesa_Pedido', jwtMW, async (req, res, next) => {
             .input('idMesa', sql.Int, idMesa)
             .input('idPedido', sql.Int, idPedido)
             .input('FechaPedido', sql.Date, FechaPedido)
+            .input('DesdeApp', sql.Int, 0)
+            .input('PreCuenta', sql.Int, 0)
             .input('Opcion', sql.Int, opcion)
             .output('Rpta')
             .execute('Pa_AEE_Mesa_Pedido')
