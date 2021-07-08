@@ -2,12 +2,9 @@
 
 var config = {
     user: 'INFINITO',
-    password: '@@Piero1207@@',
-    server: 'infinito.database.windows.net',
-    database: 'BD_SRCOMANDA_ELSULTAN',
-    options: {
-        encrypt: true,
-    }
+    password: 'Infinito1234',
+    server: '212.83.166.109',
+    database: 'BD_SRCOMANDA_ELSULTAN'
 };
  
 
