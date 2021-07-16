@@ -4,7 +4,7 @@ var config = {
     user: 'sa',
     password: '@@Infinito1234',
     server: '212.83.166.109',
-    database: 'BD_SRGOURMET_ELSULTAN'
+    database: 'BD_SRGOURMET_LAGRANJA_YAVARI'
 };
  
 
