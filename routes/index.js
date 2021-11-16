@@ -1918,6 +1918,7 @@ router.post('/Pa_AEE_FormaPago_Salidas', jwtMW, async (req, res, next) => {
     var IdSalida = req.body.IdSalida;
     var IdFormaPago = req.body.IdFormaPago;
     var IdValeConsumo;
+    var IdAlquiler;
 
     if (req.body.IdValeConsumo == 0)
         IdValeConsumo = null;
@@ -1926,6 +1927,13 @@ router.post('/Pa_AEE_FormaPago_Salidas', jwtMW, async (req, res, next) => {
         IdValeConsumo = req.body.IdValeConsumo;
 
     var Monto = req.body.Monto;
+
+    if (req.body.IdAlquiler == 0)
+        IdAlquiler = null;
+
+    else
+        IdAlquiler = req.body.IdAlquiler;
+
     var Opcion = req.body.Opcion;
 
     try {
@@ -1935,6 +1943,7 @@ router.post('/Pa_AEE_FormaPago_Salidas', jwtMW, async (req, res, next) => {
             .input('IdFormaPago', sql.Int, IdFormaPago)
             .input('IdValeConsumo', sql.Int, IdValeConsumo)
             .input('Monto', sql.Decimal, Monto)
+            .input('IdAlquiler', sql.Int, IdAlquiler)
             .input('Opcion', sql.Int, Opcion)
             .output('Rpta')
             .execute('Pa_AEE_FormaPago_Salidas')
