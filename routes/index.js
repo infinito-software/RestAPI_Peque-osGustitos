@@ -897,12 +897,14 @@ router.get('/Pa_MB_PresentacionProd_Filtro', jwtMW, async (req, res, next) => {
 
 router.get('/Pa_MB_PresentacionProd', jwtMW, async (req, res, next) => {
     var idBusqueda = req.query.idBusqueda;
+    var IdSalon = req.query.IdSalon;
     var Opcion = req.query.Opcion;
     if (Opcion != null) {
         try {
             const pool = await poolPromise
             const queryResult = await pool.request()
                 .input('idBusqueda', sql.Int, idBusqueda)
+                .input('IdSalon', sql.Int, IdSalon)
                 .input('Opcion', sql.Int, Opcion)
                 .execute('Pa_MB_PresentacionProd')
 
@@ -924,34 +926,6 @@ router.get('/Pa_MB_PresentacionProd', jwtMW, async (req, res, next) => {
 
 });
 
-router.get('/Pa_MB_PresentacionProd', jwtMW, async (req, res, next) => {
-    var idBusqueda = req.query.idBusqueda;
-    var Opcion = req.query.Opcion;
-    if (idBusqueda != null && Opcion != null) {
-        try {
-            const pool = await poolPromise
-            const queryResult = await pool.request()
-                .input('idBusqueda', sql.Int, idBusqueda)
-                .input('Opcion', sql.Int, Opcion)
-                .execute('Pa_MB_PresentacionProd')
-
-            if (queryResult.recordset.length > 0) {
-                res.send(JSON.stringify({ success: true, result: queryResult.recordset }));
-            }
-            else {
-                res.send(JSON.stringify({ success: false, message: "Empty" }));
-            }
-        }
-        catch (err) {
-            res.status(500) //Internal Server Error
-            res.send(JSON.stringify({ success: false, message: err.message }));
-        }
-    }
-    else {
-        res.send(JSON.stringify({ success: false, message: "Missing codigo in query" }));
-    }
-
-});
 
 //=========================================================================
 // TABLA EXTRA
