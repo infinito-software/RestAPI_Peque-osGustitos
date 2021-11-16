@@ -314,6 +314,7 @@ router.get('/almacenes', jwtMW, async (req, res, next) => {
 
 router.get('/AutenticarUsuario', jwtMW, async (req, res, next) => {
 
+    var Opcion = req.query.Opcion;
     var Iniciales = req.query.Iniciales;
     var Contraseña = req.query.Contraseña;
     if (Iniciales != null && Contraseña != null) {
@@ -321,7 +322,8 @@ router.get('/AutenticarUsuario', jwtMW, async (req, res, next) => {
             const pool = await poolPromise
             const queryResult = await pool.request()
                 .input('Iniciales', sql.VarChar, Iniciales)
-                .input('contraseña', sql.Int, Contraseña)
+                .input('contraseña', sql.VarChar, Contraseña)
+                .input('Opcion', sql.Int, Opcion)
                 .execute('Pa_Auntenticar_Usuario')
 
             if (queryResult.recordset.length > 0) {
@@ -530,6 +532,39 @@ router.get('/Pa_MB_FormaPago', jwtMW, async (req, res, next) => {
 
 });
 
+
+//=========================================================================
+// TABLA OPERACIONES
+// POST / GET
+//=========================================================================
+router.get('/Pa_MB_Operacion', jwtMW, async (req, res, next) => {
+
+    var Opcion = req.query.Opcion;
+    if (Opcion != null) {
+        try {
+            const pool = await poolPromise
+            const queryResult = await pool.request()
+                .input('Opcion', sql.Int, Opcion)
+                .execute('Pa_MB_Operacion')
+
+            if (queryResult.recordset.length > 0) {
+                res.send(JSON.stringify({ success: true, result: queryResult.recordset }));
+            }
+            else {
+                res.send(JSON.stringify({ success: false, message: "Empty" }));
+            }
+        }
+        catch (err) {
+            res.status(500) //Internal Server Error
+            res.send(JSON.stringify({ success: false, message: err.message }));
+        }
+    }
+    else {
+        res.send(JSON.stringify({ success: false, message: "Missing codigo in query" }));
+    }
+
+});
+
 //=========================================================================
 // TABLA SALONES
 // POST / GET
@@ -718,6 +753,36 @@ router.get('/Pa_MB_Stock_Listas', jwtMW, async (req, res, next) => {
         res.send(JSON.stringify({ success: false, message: "Missing codigo in query" }));
     }
 
+})
+
+router.get('/Pa_MB_Stock', jwtMW, async (req, res, next) => {
+
+    var Opcion = req.query.Opcion;
+    var IdAlmacen = req.query.IdAlmacen;
+    if (IdAlmacen != null && Opcion != null) {
+        try {
+            const pool = await poolPromise
+            const queryResult = await pool.request()
+                .input('Opcion', sql.Int, Opcion)
+                .input('IdAlmacen', sql.Int, IdAlmacen)
+                .execute('Pa_MB_Stock')
+
+            if (queryResult.recordset.length > 0) {
+                res.send(JSON.stringify({ success: true, result: queryResult.recordset }));
+            }
+            else {
+                res.send(JSON.stringify({ success: false, message: "Empty" }));
+            }
+        }
+        catch (err) {
+            res.status(500) //Internal Server Error
+            res.send(JSON.stringify({ success: false, message: err.message }));
+        }
+    }
+    else {
+        res.send(JSON.stringify({ success: false, message: "Missing codigo in query" }));
+    }
+
 });
 
 router.get('/Pa_MB_Stock_Filtro', jwtMW, async (req, res, next) => {
@@ -751,6 +816,46 @@ router.get('/Pa_MB_Stock_Filtro', jwtMW, async (req, res, next) => {
     }
 
 });
+
+router.post('/Pa_AEE_Stock', jwtMW, async (req, res, next) => {
+
+
+    var idStock = req.body.idStock;
+    var IdProducto = req.body.IdProducto;
+    var StockInicial = req.body.StockInicial;
+    var StockP = req.body.StockP;
+    var idAlmacen = req.body.idAlmacen;
+    var idUnidadMedida = req.body.idUnidadMedida;
+    var Opcion = req.body.Opcion;
+
+    try {
+        const pool = await poolPromise
+        const queryResult = await pool.request()
+            .input('IdStock', sql.Int, idStock)
+            .input('IdProducto', sql.Int, IdProducto)
+            .input('StockInicial', sql.Decimal, StockInicial)
+            .input('stock', sql.Decimal, StockP)
+            .input('IdAlmacen', sql.Int, idAlmacen)
+            .input('idUnidadMedida', sql.Int, idUnidadMedida)
+            .input('Opcion', sql.Int, Opcion)
+            .output('Rpta')
+            .execute('Pa_AEE_Stock')
+
+        if (queryResult.output != null) {
+            const ID = queryResult.output.Rpta
+            res.end(JSON.stringify({ success: true, message: ID }));
+        }
+        else {
+            res.send(JSON.stringify({ success: false, message: err.message }))
+        }
+
+    }
+    catch (err) {
+        res.status(500) //Internal Server Error
+        res.send(JSON.stringify({ success: false, message: err.message }));
+    }
+
+})
 
 //=========================================================================
 // TABLA PRESENTACION PRODUCTO
@@ -854,11 +959,13 @@ router.get('/Pa_MB_PresentacionProd', jwtMW, async (req, res, next) => {
 //=========================================================================
 router.get('/Pa_MB_Extra', jwtMW, async (req, res, next) => {
 
+    var IdProducto = req.query.IdProducto;
     var opcion = req.query.opcion;
     if (opcion != null) {
         try {
             const pool = await poolPromise
             const queryResult = await pool.request()
+                .input('IdProducto', sql.Int, IdProducto)
                 .input('opcion', sql.Int, opcion)
                 .execute('Pa_MB_Extra')
 
@@ -994,6 +1101,7 @@ router.post('/Pa_AEE_DetPedido', jwtMW, async (req, res, next) => {
     var DescripExtra = req.body.DescripExtra;
     var HoraInicioPreparacion = req.body.HoraInicioPreparacion;
     var HoraFinPreparacion = req.body.HoraFinPreparacion;
+    var IdAlquiler = req.body.IdAlquiler;
     var opcion = req.body.opcion;
 
     try {
@@ -1012,6 +1120,7 @@ router.post('/Pa_AEE_DetPedido', jwtMW, async (req, res, next) => {
             .input('DescripExtra', sql.VarChar, DescripExtra)
             .input('HoraInicioPreparacion', sql.DateTime, new Date(HoraInicioPreparacion))
             .input('HoraFinPreparacion', sql.DateTime, new Date(HoraFinPreparacion))
+            .input('IdAlquiler', sql.Int, IdAlquiler)
             .input('Opcion', sql.Int, opcion)
             .output('Rpta')
             .execute('Pa_AEE_DetPedido')
@@ -1276,6 +1385,182 @@ router.get('/Pa_MB_Mesa_Pedido', jwtMW, async (req, res, next) => {
     }
 
 });
+
+//=========================================================================
+// TABLA VALES
+// POST / GET
+//=========================================================================
+
+router.post('/Pa_AEE_TabVale', jwtMW, async (req, res, next) => {
+
+
+    var idVale = req.body.idVale;
+    var idOperacion = req.body.idOperacion;
+    var idComprobante = req.body.idComprobante;
+    var idAlmacen = req.body.idAlmacen;
+    var Descripcion = req.body.Descripcion;
+    var TipoVale = req.body.TipoVale;
+    var Numero = req.body.Numero;
+    var Fecha = req.body.Fecha;
+    var FechaIngreso = req.body.FechaIngreso;
+    var idCosto = req.body.idCosto;
+
+    var idAgente;
+
+    if (req.body.idAgente == 0)
+        idAgente = null;
+
+    else
+        idAgente = req.body.idAgente;
+
+    var idValeRef = req.body.idValeRef;
+
+    var Opcion = req.body.Opcion;
+
+    try {
+        const pool = await poolPromise
+        const queryResult = await pool.request()
+            .input('idVale', sql.Int, idVale)
+            .input('idOperacion', sql.Int, idOperacion)
+            .input('idComprobante', sql.Int, idComprobante)
+            .input('idAlmacen', sql.Int, idAlmacen)
+            .input('Descripcion', sql.VarChar, Descripcion)
+            .input('TipoVale', sql.Char, TipoVale)
+            .input('Numero', sql.VarChar, Numero)
+            .input('Fecha', sql.Date, Fecha)
+            .input('FechaIngreso', sql.Date, FechaIngreso)
+            .input('idCosto', sql.Int, idCosto)
+            .input('idAgente', sql.Int, idAgente)
+            .input('idValeRef', sql.Int, idValeRef)
+            .input('Opcion', sql.Int, Opcion)
+            .output('Rpta')
+            .execute('Pa_AEE_TabVale')
+
+        if (queryResult.output != null) {
+            const ID = queryResult.output.Rpta
+            res.end(JSON.stringify({ success: true, message: ID }));
+        }
+        else {
+            res.send(JSON.stringify({ success: false, message: err.message }))
+        }
+
+    }
+    catch (err) {
+        res.status(500) //Internal Server Error
+        res.send(JSON.stringify({ success: false, message: err.message }));
+    }
+
+})
+
+router.put('/Pa_AEE_TabVale', jwtMW, async (req, res, next) => {
+
+
+    var idVale = req.body.idVale;
+    var idOperacion = req.body.idOperacion;
+    var idComprobante = req.body.idComprobante;
+    var idAlmacen = req.body.idAlmacen;
+    var Descripcion = req.body.Descripcion;
+    var TipoVale = req.body.TipoVale;
+    var Numero = req.body.Numero;
+    var Fecha = req.body.Fecha;
+    var FechaIngreso = req.body.FechaIngreso;
+    var idCosto = req.body.idCosto;
+
+    var idAgente;
+
+    if (req.body.idAgente == 0)
+        idAgente = null;
+
+    else
+        idAgente = req.body.idAgente;
+
+    var idValeRef = req.body.idValeRef;
+
+    var Opcion = req.body.Opcion;
+
+    try {
+        const pool = await poolPromise
+        const queryResult = await pool.request()
+            .input('idVale', sql.Int, idVale)
+            .input('idOperacion', sql.Int, idOperacion)
+            .input('idComprobante', sql.Int, idComprobante)
+            .input('idAlmacen', sql.Int, idAlmacen)
+            .input('Descripcion', sql.VarChar, Descripcion)
+            .input('TipoVale', sql.Char, TipoVale)
+            .input('Numero', sql.VarChar, Numero)
+            .input('Fecha', sql.Date, Fecha)
+            .input('FechaIngreso', sql.Date, FechaIngreso)
+            .input('idCosto', sql.Int, idCosto)
+            .input('idAgente', sql.Int, idAgente)
+            .input('idValeRef', sql.Int, idValeRef)
+            .input('Opcion', sql.Int, Opcion)
+            .output('Rpta')
+            .execute('Pa_AEE_TabVale')
+
+        if (queryResult.output != null) {
+            const ID = queryResult.output.Rpta
+            res.end(JSON.stringify({ success: true, message: ID }));
+        }
+        else {
+            res.send(JSON.stringify({ success: false, message: err.message }))
+        }
+
+    }
+    catch (err) {
+        res.status(500) //Internal Server Error
+        res.send(JSON.stringify({ success: false, message: err.message }));
+    }
+
+})
+router.post('/Pa_AEE_DetVale', jwtMW, async (req, res, next) => {
+
+
+    var idDetVale = req.body.idDetVale;
+    var idVale = req.body.idVale;
+    var idStock = req.body.idStock;
+
+    var idSPSalida;
+
+    if (req.body.idSPSalida == 0)
+        idSPSalida = null;
+
+    else
+        idSPSalida = req.body.idSPSalida;
+
+    var Cantidad = req.body.Cantidad;
+    var Monto = req.body.Monto;
+    var idAlmacen = req.body.idAlmacen;
+    var Opcion = req.body.Opcion;
+
+    try {
+        const pool = await poolPromise
+        const queryResult = await pool.request()
+            .input('idDetVale', sql.Int, idDetVale)
+            .input('idVale', sql.Int, idVale)
+            .input('idStock', sql.Int, idStock)
+            .input('idSPSalida', sql.Int, idSPSalida)
+            .input('Cantidad', sql.Float, Cantidad)
+            .input('Monto', sql.Decimal, Monto)
+            .input('idAlmacen', sql.Int, idAlmacen)
+            .input('Opcion', sql.Int, Opcion)
+            .output('Rpta')
+            .execute('Pa_AEE_DetVale')
+
+        if (queryResult.output != null) {
+            const ID = queryResult.output.Rpta
+            res.end(JSON.stringify({ success: true, message: ID }));
+        }
+        else {
+            res.send(JSON.stringify({ success: false, message: err.message }))
+        }
+
+    }
+    catch (err) {
+        res.status(500) //Internal Server Error
+        res.send(JSON.stringify({ success: false, message: err.message }));
+    }
+
+})
 
 //=========================================================================
 // TABLA CLIENTES
@@ -1733,6 +2018,10 @@ router.post('/Pa_AEE_DetSalida', jwtMW, async (req, res, next) => {
         idConceptoNotas = req.body.idConceptoNotas;
 
     var CantOtraUnd = req.body.CantOtraUnd;
+
+    var DescripcionAdicional = req.body.DescripcionAdicional;
+    var IDAlquiler_Producto = req.body.IDAlquiler_Producto;
+
     var Opcion = req.body.Opcion;
 
     try {
@@ -1752,6 +2041,8 @@ router.post('/Pa_AEE_DetSalida', jwtMW, async (req, res, next) => {
             .input('idConceptoNotas', sql.Int, idConceptoNotas)
             .input('CodAfectacionIGV', sql.VarChar, CodAfectacionIGV)
             .input('CantOtraUnd', sql.Decimal, CantOtraUnd)
+            .input('DescripcionAdicional', sql.VarChar, DescripcionAdicional)
+            .input('IDAlquiler_Producto', sql.Int, IDAlquiler_Producto)
             .input('Opcion', sql.Int, Opcion)
             .output('Rpta')
             .execute('Pa_AEE_DetSalida')
