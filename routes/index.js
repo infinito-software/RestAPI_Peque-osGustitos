@@ -238,6 +238,7 @@ router.put('/Pa_AEE_SerieCorrelativo', jwtMW, async (req, res, next) => {
     var ParaFE = req.body.ParaFE;
     var IdAlmacen = req.body.IdAlmacen;
     var IdTipCompPago = req.body.IdTipCompPago;
+    var ModeloCPE = req.body.ModeloCPE;
     var opcion = req.body.opcion;
 
     try {
@@ -250,6 +251,7 @@ router.put('/Pa_AEE_SerieCorrelativo', jwtMW, async (req, res, next) => {
             .input('ParaFE', sql.Char, ParaFE)
             .input('IdAlmacen', sql.Int, IdAlmacen)
             .input('IdCompPago', sql.Int, IdTipCompPago)
+            .input('ModeloCPE', sql.VarChar, ModeloCPE)
             .input('Opcion', sql.Int, opcion)
             .output('Rpta')
             .execute('Pa_AEE_SerieCorrelativo')
