@@ -1827,6 +1827,7 @@ router.post('/Pa_AEE_Salida', jwtMW, async (req, res, next) => {
     var CodigoCDR = req.body.CodigoCDR;
     var DireccionEntrega = req.body.DireccionEntrega;
     var CelularEntrega = req.body.CelularEntrega;
+    var IdSalon = req.body.IdSalon;
     var Opcion = req.body.Opcion;
 
     try {
