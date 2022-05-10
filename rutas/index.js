@@ -252,6 +252,7 @@ router.put('/Pa_AEE_SerieCorrelativo', jwtMW, async (req, res, next) => {
             .input('IdAlmacen', sql.Int, IdAlmacen)
             .input('IdCompPago', sql.Int, IdTipCompPago)
             .input('ModeloCPE', sql.VarChar, ModeloCPE)
+            .input('IdCaja', sql.Int, 0)
             .input('Opcion', sql.Int, opcion)
             .output('Rpta')
             .execute('Pa_AEE_SerieCorrelativo')
@@ -333,7 +334,7 @@ router.get('/AutenticarUsuario', jwtMW, async (req, res, next) => {
             }
             else {
                 res.send(JSON.stringify({ success: false, message: "Empty" }));
-            }pa_
+            }
         }
         catch (err) {
             res.status(500) //Internal Server Error
@@ -1078,6 +1079,7 @@ router.post('/Pa_AEE_DetPedido', jwtMW, async (req, res, next) => {
     var HoraInicioPreparacion = req.body.HoraInicioPreparacion;
     var HoraFinPreparacion = req.body.HoraFinPreparacion;
     var IdAlquiler = req.body.IdAlquiler;
+    var IdsInsumosExtras = req.body.IdsInsumosExtras;
     var opcion = req.body.opcion;
 
     try {
@@ -1097,6 +1099,7 @@ router.post('/Pa_AEE_DetPedido', jwtMW, async (req, res, next) => {
             .input('HoraInicioPreparacion', sql.DateTime, new Date(HoraInicioPreparacion))
             .input('HoraFinPreparacion', sql.DateTime, new Date(HoraFinPreparacion))
             .input('IdAlquiler', sql.Int, IdAlquiler)
+            .input('IdInsumosExtras', sql.NVarChar, IdsInsumosExtras)
             .input('Opcion', sql.Int, opcion)
             .output('Rpta')
             .execute('Pa_AEE_DetPedido')
@@ -1488,6 +1491,7 @@ router.put('/Pa_AEE_TabVale', jwtMW, async (req, res, next) => {
     }
 
 })
+
 router.post('/Pa_AEE_DetVale', jwtMW, async (req, res, next) => {
 
 
@@ -1891,6 +1895,7 @@ router.post('/Pa_AEE_Salida', jwtMW, async (req, res, next) => {
             .input('CodigoEstadoCDR', sql.NVarChar, CodigoCDR)
             .input('DireccionEntrega', sql.NVarChar, DireccionEntrega)
             .input('CelularEntrega', sql.NVarChar, CelularEntrega)
+            .input('IdSalon', sql.Int, IdSalon)
             .input('Opcion', sql.Int, Opcion)
             .output('Rpta')
             .execute('Pa_AEE_Salida')
@@ -1918,6 +1923,7 @@ router.post('/Pa_AEE_Salida', jwtMW, async (req, res, next) => {
 
 router.post('/Pa_AEE_FormaPago_Salidas', jwtMW, async (req, res, next) => {
 
+    var IdFormaPago_Salidas = req.body.IdFormaPago_Salidas;
     var IdSalida = req.body.IdSalida;
     var IdFormaPago = req.body.IdFormaPago;
     var IdValeConsumo;
@@ -1937,16 +1943,20 @@ router.post('/Pa_AEE_FormaPago_Salidas', jwtMW, async (req, res, next) => {
     else
         IdAlquiler = req.body.IdAlquiler;
 
+    var FechaRegistro = req.body.FechaRegistro;
+
     var Opcion = req.body.Opcion;
 
     try {
         const pool = await poolPromise
         const queryResult = await pool.request()
+            .input('IdFormaPago_Salidas', sql.Int, IdFormaPago_Salidas)
             .input('IdSalida', sql.Int, IdSalida)
             .input('IdFormaPago', sql.Int, IdFormaPago)
             .input('IdValeConsumo', sql.Int, IdValeConsumo)
             .input('Monto', sql.Decimal, Monto)
             .input('IdAlquiler', sql.Int, IdAlquiler)
+            .input('FechaRegistro', sql.Date, FechaRegistro)
             .input('Opcion', sql.Int, Opcion)
             .output('Rpta')
             .execute('Pa_AEE_FormaPago_Salidas')
@@ -2006,7 +2016,11 @@ router.post('/Pa_AEE_DetSalida', jwtMW, async (req, res, next) => {
     var CantOtraUnd = req.body.CantOtraUnd;
 
     var DescripcionAdicional = req.body.DescripcionAdicional;
-    var IDAlquiler_Producto = req.body.IDAlquiler_Producto;
+
+    if (req.body.IDAlquiler_Producto == 0)
+        IDAlquiler_Producto = null;
+    else
+        IDAlquiler_Producto = req.body.IDAlquiler_Producto;
 
     var Opcion = req.body.Opcion;
 
