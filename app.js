@@ -31,4 +31,4 @@ app.use(function (err, req, res, next) {
 
 app.use("/", routes);
 
-app.listen(PORT, () => { console.log("SR GOURMET API RUNNING") });
+app.listen(PORT, () => { console.log("Sr. Gourmet API RUNNING") });
