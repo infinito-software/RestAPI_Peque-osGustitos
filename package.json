@@ -1,7 +1,7 @@
 {
-  "name": "iquitos-delivery_api",
+  "name": "el_suave_api",
   "version": "1.0.0",
-  "description": "IquitosDelivery_API",
+  "description": "ElSuave_API",
   "main": "app.js",
   "author": {
     "name": ""
