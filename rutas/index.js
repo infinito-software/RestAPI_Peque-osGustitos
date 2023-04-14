@@ -2181,8 +2181,6 @@ router.get('/Pa_RPT_ResVtasxFPago_turno', jwtMW, async (req, res, next) => {
                 .input('idturno', sql.Int, idturno)
                 .input('idUsuario', sql.Int, idUsuario)
                 .input('PorFechas', sql.TinyInt, 0)
-                .input('FechaInicio', sql.Date, new Date())
-                .input('FechaFin', sql.Date, new Date())
                 .input('Opcion', sql.Int, Opcion)
                 .execute('Pa_RPT_ResVtasxFPago_turno')
 
