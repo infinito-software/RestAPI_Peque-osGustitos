@@ -5,7 +5,7 @@ var config = {
     user: 'sa',
     password: '@@Infinito1234',
     server: '167.114.106.184',
-    database: 'BD_SRGOURMET_MANATI_FAST_FOOD'
+    database: 'BD_SRGOURMET_PEQUEÑOSGUSTITOS'
 };
 
 //BD_SRGOURMET_ELSUAVE
