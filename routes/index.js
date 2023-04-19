@@ -282,7 +282,7 @@ router.put('/Pa_AEE_SerieCorrelativo', jwtMW, async (req, res, next) => {
 
 router.get('/Pa_MB_Local', jwtMW, async (req, res, next) => {
 
-    var IdLocal = req.query.IdLocal;
+    var IdLocal = req.query.IdLocalGlobal;
     var userAdmin = req.query.userAdmin;
     var Opcion = req.query.Opcion;
     if (Opcion != null) {
